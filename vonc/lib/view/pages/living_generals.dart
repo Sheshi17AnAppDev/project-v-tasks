@@ -15,3 +15,17 @@ class _LivingGeneralsState extends State<LivingGenerals> {
     );
   }
 }
+
+class LivingGenerals_Favourite extends StatefulWidget {
+  const LivingGenerals_Favourite({super.key});
+
+  @override
+  State<LivingGenerals_Favourite> createState() => _LivingGenerals_FavouriteState();
+}
+
+class _LivingGenerals_FavouriteState extends State<LivingGenerals_Favourite> {
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold();
+  }
+}

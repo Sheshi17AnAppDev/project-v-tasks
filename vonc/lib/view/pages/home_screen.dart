@@ -6,7 +6,8 @@ import 'package:vonc/view/pages/food_page.dart';
 import 'package:vonc/view/pages/living_Essentials.dart';
 import 'package:vonc/view/pages/living_generals.dart';
 import 'package:vonc/view/pages/offers_page.dart';
-import 'package:vonc/view/pages/vonc_io.dart';
+import 'package:vonc/view/pages/vonc_io_screens.dart';
+import 'package:vonc/vonc_splash_view.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -51,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               case 3:
                                 return const LivingGenerals();
                               case 4:
-                                return const Cervices();
+                                return const VoncIoScreens();
 
                               default:
                                 return const HomeScreen();
@@ -174,7 +175,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     case 3:
                                                       return const Cervices();
                                                     case 4:
-                                                      return const VoncIo();
+                                                      return const VoncIoScreens();
                                                     default:
                                                       return const HomeScreen();
                                                   }
@@ -228,7 +229,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                const VoncIo()),
+                                                const VoncIoScreens()),
                                       );
                                     },
                                     child: Image.asset(
@@ -266,7 +267,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       case 3:
                                                         return const Cervices();
                                                       case 4:
-                                                        return const VoncIo();
+                                                        return const VoncIoScreens();
                                                       default:
                                                         return const HomeScreen();
                                                     }
@@ -329,7 +330,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                const VoncIo()),
+                                                const VoncIoScreens()),
                                       );
                                     },
                                     child: Image.asset(
@@ -372,14 +373,24 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: AppData.FoodImages.map((image) {
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            height: 150,
-                            width: MediaQuery.sizeOf(context).width - 50,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(30),
-                              image: DecorationImage(
-                                image: AssetImage(image),
-                                fit: BoxFit.fill,
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) {
+                                  return const FoodPage();
+                                }),
+                              );
+                            },
+                            child: Container(
+                              height: 150,
+                              width: MediaQuery.sizeOf(context).width - 50,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(30),
+                                image: DecorationImage(
+                                  image: AssetImage(image),
+                                  fit: BoxFit.fill,
+                                ),
                               ),
                             ),
                           ),
@@ -433,14 +444,24 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: AppData.LivingEssentials.map((image) {
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          height: 180,
-                          width: MediaQuery.sizeOf(context).width - 50,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30),
-                            image: DecorationImage(
-                              image: AssetImage(image),
-                              fit: BoxFit.fill,
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const LivingEssentials()),
+                            );
+                          },
+                          child: Container(
+                            height: 180,
+                            width: MediaQuery.sizeOf(context).width - 50,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(30),
+                              image: DecorationImage(
+                                image: AssetImage(image),
+                                fit: BoxFit.fill,
+                              ),
                             ),
                           ),
                         ),
@@ -492,14 +513,23 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: AppData.LivingGenerals.map((image) {
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          height: 180,
-                          width: MediaQuery.sizeOf(context).width - 50,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30),
-                            image: DecorationImage(
-                              image: AssetImage(image),
-                              fit: BoxFit.fill,
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const LivingGenerals()),
+                            );
+                          },
+                          child: Container(
+                            height: 180,
+                            width: MediaQuery.sizeOf(context).width - 50,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(30),
+                              image: DecorationImage(
+                                image: AssetImage(image),
+                                fit: BoxFit.fill,
+                              ),
                             ),
                           ),
                         ),
@@ -548,14 +578,23 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: AppData.Cevices.map((image) {
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          height: 180,
-                          width: MediaQuery.sizeOf(context).width - 50,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30),
-                            image: DecorationImage(
-                              image: AssetImage(image),
-                              fit: BoxFit.fill,
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const Cervices()),
+                            );
+                          },
+                          child: Container(
+                            height: 180,
+                            width: MediaQuery.sizeOf(context).width - 50,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(30),
+                              image: DecorationImage(
+                                image: AssetImage(image),
+                                fit: BoxFit.fill,
+                              ),
                             ),
                           ),
                         ),
@@ -601,7 +640,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const VoncIo()),
+                      MaterialPageRoute(
+                          builder: (context) => const VoncIoScreens()),
                     );
                   },
                 );

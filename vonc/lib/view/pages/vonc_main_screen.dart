@@ -90,7 +90,7 @@ class _VoncMainScreenState extends State<VoncMainScreen> {
               ),
               Container(
                 width: MediaQuery.of(context).size.width * 0.668,
-                height: 40,
+                height: 30,
                 decoration: BoxDecoration(
                   color: Colors.grey.shade900.withOpacity(0.5),
                   borderRadius: BorderRadius.circular(30),

@@ -970,7 +970,163 @@ class _ExampleAuthScreenState extends State<ExampleAuthScreen> {
                     //   ],
                     // ),
             ),
-
+ Container(
+            child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              Container(),
+              Container(
+                height: 100,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(60),
+                    color: Colors.lightBlueAccent),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Image.asset("assets/icons/food_3674384.png"),
+                      Text("Food"),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Align(
+                            alignment: Alignment.centerRight,
+                            child: DropdownButton(
+                                underline: Container(),
+                                dropdownColor: Colors.white,
+                                items: const [
+                                  DropdownMenuItem(
+                                    value: "1",
+                                    child: Text("1"),
+                                  ),
+                                  DropdownMenuItem(
+                                    value: "2",
+                                    child: Text("2"),
+                                  ),
+                                  DropdownMenuItem(
+                                    value: "3",
+                                    child: Text("3"),
+                                  )
+                                ],
+                                onChanged: (value) {})),
+                      ),
+                    ]),
+              ),
+              Spacer(),
+              Container(
+                height: 100,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(60),
+                    color: Colors.greenAccent.shade700),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Image.asset("assets/icons/shopping-cart_476211.png"),
+                      Text("Living_Essentials"),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Align(
+                            alignment: Alignment.centerRight,
+                            child: DropdownButton(
+                                underline: Container(),
+                                dropdownColor: Colors.white,
+                                items: const [
+                                  DropdownMenuItem(
+                                    value: "1",
+                                    child: Text("1"),
+                                  ),
+                                  DropdownMenuItem(
+                                    value: "2",
+                                    child: Text("2"),
+                                  ),
+                                  DropdownMenuItem(
+                                    value: "3",
+                                    child: Text("3"),
+                                  )
+                                ],
+                                onChanged: (value) {})),
+                      ),
+                    ]),
+              ),
+              Container(
+                height: 100,
+              ),
+              Container(
+                height: 100,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(60),
+                    color: Colors.yellowAccent.shade400),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Image.asset("assets/icons/woman.png"),
+                      Text("Living_Generals"),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Align(
+                            alignment: Alignment.centerRight,
+                            child: DropdownButton(
+                                underline: Container(),
+                                dropdownColor: Colors.white,
+                                items: const [
+                                  DropdownMenuItem(
+                                    value: "1",
+                                    child: Text("1"),
+                                  ),
+                                  DropdownMenuItem(
+                                    value: "2",
+                                    child: Text("2"),
+                                  ),
+                                  DropdownMenuItem(
+                                    value: "3",
+                                    child: Text("3"),
+                                  )
+                                ],
+                                onChanged: (value) {})),
+                      ),
+                    ]),
+              ),
+              Container(
+                height: 50,
+              ),
+              Container(
+                height: 100,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(60),
+                    color: Colors.grey.shade500),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Image.asset("assets/icons/support-services_10723986.png"),
+                      Text("Cervices"),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Align(
+                            alignment: Alignment.centerRight,
+                            child: DropdownButton(
+                                icon: Icon(Icons.arrow_drop_down),
+                                underline: Container(),
+                                dropdownColor: Colors.white,
+                                items: const [
+                                  DropdownMenuItem(
+                                    value: "1",
+                                    child: Text("1"),
+                                  ),
+                                  DropdownMenuItem(
+                                    value: "2",
+                                    child: Text("2"),
+                                  ),
+                                  DropdownMenuItem(
+                                    value: "3",
+                                    child: Text("3"),
+                                  )
+                                ],
+                                onChanged: (value) {})),
+                      ),
+                    ]),
+              ),
+            ],
+          ),
+        )),
                                   ],
                                 ),
                               )

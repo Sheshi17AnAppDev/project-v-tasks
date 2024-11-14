@@ -15,3 +15,19 @@ class _FoodPageState extends State<FoodPage> {
     );
   }
 }
+
+class FoodpageFavourite extends StatefulWidget {
+  const FoodpageFavourite({super.key});
+
+  @override
+  State<FoodpageFavourite> createState() => _FoodpageFavouriteState();
+}
+
+class _FoodpageFavouriteState extends State<FoodpageFavourite> {
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      
+    );
+  }
+}
