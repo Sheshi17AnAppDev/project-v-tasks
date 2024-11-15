@@ -17,6 +17,7 @@ class _Example2State extends State<Example2> {
       body: Center(
         child: Text('Example 2'),
       ),
+
       floatingActionButton: Builder(builder: (context) {
         return FabCircularMenuPlus(
           alignment: Alignment.centerRight,
@@ -102,6 +103,7 @@ class _Example2State extends State<Example2> {
           ],
         );
       }),
+      
     );
   }
 }

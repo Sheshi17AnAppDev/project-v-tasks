@@ -37,9 +37,9 @@ class _FavouritePageState extends State<FavouritePage> {
                   "Living Essentials",
                   style: TextStyle(fontSize: 12),
                 )),
-            const Tab(
+            Tab(
               icon: Icon(Icons.watch),
-              child: Text(
+              child: const Text(
                 "Living Generals",
                 style: TextStyle(fontSize: 12),
               ),

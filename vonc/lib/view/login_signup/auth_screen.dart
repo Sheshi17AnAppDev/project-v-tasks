@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:intl_phone_field/phone_number.dart';
 import 'package:pinput/pinput.dart';
 
 import 'package:vonc/view/pages/vonc_main_screen.dart';
@@ -16,7 +17,7 @@ class _AuthScreenState extends State<AuthScreen> {
   Widget build(BuildContext context) {
     return const Scaffold(
       backgroundColor: Colors.black,
-      body: PhoneVerification(),
+      body: Email_Password_Verifiction_Screen(),
     );
   }
 }
@@ -29,6 +30,9 @@ class PhoneVerification extends StatefulWidget {
 }
 
 class _PhoneVerificationState extends State<PhoneVerification> {
+  final phoneKey = GlobalKey<FormState>();
+  TextEditingController phoneController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -129,7 +133,7 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                         child: SizedBox(
                           width: screenWidth * 0.8,
                           child: Form(
-                            // key: phoneKey,
+                            key: phoneKey,
                             child: Column(
                               children: [
                                 Padding(
@@ -139,14 +143,20 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                                   ),
                                   child: IntlPhoneField(
                                     initialCountryCode: 'IN',
-                                    // controller: phoneController,
-                                    // keyboardType: TextInputType.number,
-                                    // validator: (value) {
-                                    //   if (phoneController.text.length != 10) {
-                                    //     return 'Plaese EnterValid Phone Number';
-                                    //   }
-                                    //   return null;
-                                    // },
+                                    controller: phoneController,
+                                    keyboardType: TextInputType.number,
+                                    onChanged: (value) {
+                                      phoneKey.currentState!.validate();
+                                    },
+                                    validator: (value) {
+                                      if (phoneController.text.length != 10) {
+                                        return 'Plaese Enter Valid Phone Number';
+                                      } else if (!RegExp(r'^[0-9]+$')
+                                          .hasMatch(phoneController.text)) {
+                                        return 'Please Enter Valid Phone Number';
+                                      }
+                                      return null;
+                                    },
                                     style: const TextStyle(
                                       color: Colors.black,
                                     ),
@@ -202,15 +212,31 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                                       backgroundColor: Colors.blueAccent,
                                     ),
                                     onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const OtpScreen(
-                                                  phoneNumber: '',
-                                                  sentOtp: '',
-                                                )),
-                                      );
+                                      if (phoneKey.currentState!.validate()) {
+                                        String validPhoneNumber =
+                                            phoneController.text.trim();
+                                        if (validPhoneNumber.isEmpty) {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(const SnackBar(
+                                                  content: Text(
+                                                      'Please enter a valid phone number')));
+                                          return;
+                                        }
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => OtpScreen(
+                                                    phoneNumber:
+                                                        validPhoneNumber,
+                                                    sentOtp: '',
+                                                  )),
+                                        );
+                                      } else {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(const SnackBar(
+                                                content: Text(
+                                                    'Please enter a valid phone number')));
+                                      }
                                     },
                                     child: const Text(
                                       "Verify Phone Number",
@@ -294,6 +320,23 @@ class OtpScreen extends StatefulWidget {
 }
 
 class _OtpScreenState extends State<OtpScreen> {
+  final otpController = TextEditingController();
+  final OtpKey = GlobalKey<FormState>();
+
+  String _obscurePhoneNumber(String phoneNumber) {
+    //return phoneNumber.replaceRange(0,phoneNumber.length - 2, '*');
+    String phoneNumber = widget.phoneNumber;
+    if (phoneNumber.length == 10) {
+      return '*' * (phoneNumber.length - 2) +
+          phoneNumber.substring(phoneNumber.length - 2);
+    } else if (phoneNumber.length >= 2) {
+      return '*' * (phoneNumber.length - 2) +
+          phoneNumber.substring(phoneNumber.length - 2);
+    } else {
+      return phoneNumber;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final defaultPinTheme = PinTheme(
@@ -432,16 +475,16 @@ class _OtpScreenState extends State<OtpScreen> {
                       Padding(
                         padding: const EdgeInsets.all(10.0),
                         child: Form(
-                          // key: OtpKey,
+                          key: OtpKey,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const SizedBox(
                                 height: 2,
                               ),
-                              const Center(
+                              Center(
                                 child: Text(
-                                  "Verification Code send to Registered mobile number",
+                                  "Verification Code send to : ${_obscurePhoneNumber(widget.phoneNumber)}",
                                   style: TextStyle(
                                     color: Colors.white70,
                                     fontSize: 10,
@@ -451,16 +494,7 @@ class _OtpScreenState extends State<OtpScreen> {
                               const SizedBox(
                                 height: 10,
                               ),
-                              // Center(
-                              //   child: Text(
-                              //     _obscurePhoneNumber(widget.phoneNumber),
-                              //     style: const TextStyle(
-                              //       color: Colors.white70,
-                              //       fontSize: 15,
-                              //       fontWeight: FontWeight.bold,
-                              //     ),
-                              //   ),
-                              // ),
+
                               Center(
                                 child: InkWell(
                                   onTap: () {
@@ -482,7 +516,7 @@ class _OtpScreenState extends State<OtpScreen> {
                               ),
                               Center(
                                 child: Pinput(
-                                  // controller: otpController,
+                                  controller: otpController,
                                   obscureText: true,
                                   length: 6,
                                   defaultPinTheme: defaultPinTheme,
@@ -561,12 +595,29 @@ class _OtpScreenState extends State<OtpScreen> {
                                     //minimumSize: Size(100, 25),
                                   ),
                                   onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              const VoncMainScreen()),
-                                    );
+                                    if (OtpKey.currentState!.validate()) {
+                                      String validOtp =
+                                          otpController.text.trim();
+                                      if (validOtp.isEmpty) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(const SnackBar(
+                                          content: Text("Please enter the Otp"),
+                                        ));
+                                        return;
+                                      }
+
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const VoncMainScreen()),
+                                      );
+                                    } else {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(const SnackBar(
+                                        content: Text("Invalid  Otp"),
+                                      ));
+                                    }
                                   },
                                   // onPressed: verifyOrResendOtp,
                                   child: const Text(
@@ -595,6 +646,719 @@ class _OtpScreenState extends State<OtpScreen> {
             ))
           ],
         ),
+      ),
+    );
+  }
+}
+
+class Email_Password_Verifiction_Screen extends StatefulWidget {
+  const Email_Password_Verifiction_Screen({super.key});
+
+  @override
+  State<Email_Password_Verifiction_Screen> createState() =>
+      _Email_Password_Verifiction_ScreenState();
+}
+
+class _Email_Password_Verifiction_ScreenState
+    extends State<Email_Password_Verifiction_Screen> {
+  final signInKey = GlobalKey<FormState>();
+  final signUpKey = GlobalKey<FormState>();
+
+  bool _SignInsubmit() {
+    final isvalid = signInKey.currentState!.validate();
+    if (isvalid) {
+      signInKey.currentState?.save();
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => const PhoneVerification()));
+      return true;
+    }
+
+    return false;
+  }
+
+  bool _SignUpsubmit() {
+    final isvalid = signUpKey.currentState!.validate();
+    if (isvalid) {
+      signUpKey.currentState?.save();
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => const PhoneVerification()));
+    }
+    signUpKey.currentState!.save();
+    return true;
+  }
+
+  bool _isPasswordVisible = false;
+  bool _isLoginEnabled = true;
+  @override
+  Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: SafeArea(
+        child: Stack(children: [
+          // Blue Shape
+          Positioned(
+            top: 0,
+            left: 0,
+            // alignment: Alignment.topLeft,
+            child: SizedBox(
+              height: screenHeight * 0.2,
+              child: Image.asset(
+                "assets/img/1.png",
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+
+          // Center(
+          //   child: Align(
+          //     alignment: Alignment.topCenter,
+          //     child: Padding(
+          //       padding: const EdgeInsets.only(top: 30),
+          //       child: SizedBox(
+          //         height: screenHeight * 0.15,
+          //         child: Image.asset(
+          //           "assets/img/vonc_inovation_Icon-rb.png",
+          //           fit: BoxFit.cover,
+          //         ),
+          //       ),
+          //     ),
+          //   ),
+          // ),
+          //Green Shape
+          Positioned(
+            top: 0,
+            right: 0,
+            //alignment: Alignment.topRight,
+            child: SizedBox(
+              height: screenHeight * 0.115,
+              child: Image.asset(
+                "assets/img/2-removebg-preview.png",
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          // Yellow Shape
+          Positioned(
+            bottom: 0,
+            left: 0,
+            //alignment: Alignment.bottomLeft,
+            child: SizedBox(
+              height: screenHeight * 0.2,
+              child: Image.asset(
+                "assets/img/3-removebg-preview.png",
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          // grey Shape
+          Positioned(
+            bottom: 0,
+            right: 0,
+            //alignment: Alignment.bottomRight,
+            child: SizedBox(
+              height: screenHeight * 0.2,
+              child: Image.asset(
+                "assets/img/4-removebg-preview.png",
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 150,
+          ),
+
+          Center(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: Container(
+                width: screenWidth * 0.8,
+                height: screenHeight * 0.572,
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.5),
+                  borderRadius: BorderRadius.circular(30),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.shade800.withOpacity(0.5),
+                      spreadRadius: 5,
+                      blurRadius: 7,
+                    ),
+                  ],
+                ),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: Column(
+                    children: <Widget>[
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      CircleAvatar(
+                        backgroundColor: Colors.transparent,
+                        radius: 65,
+                        child: Center(
+                          child: Image.asset(
+                            "assets/img/V_O_n_C_Logo crop-min.png",
+                          ),
+                        ),
+                      ),
+
+                      // Text From Field
+                      _isLoginEnabled
+                          ? Form(
+                              key: signInKey,
+                              child: Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      left: 15,
+                                      right: 15,
+                                    ),
+                                    child: TextFormField(
+                                      keyboardType: TextInputType.emailAddress,
+                                      validator: (value) {
+                                        if (value!.isEmpty ||
+                                            !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*|+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                                .hasMatch(value)) {
+                                          return " Enter a valid email!";
+                                        }
+                                        return null;
+                                      },
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                      ),
+                                      decoration: InputDecoration(
+                                        filled: true,
+                                        fillColor: Colors.grey.shade500,
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(30),
+                                        ),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(30),
+                                          borderSide: const BorderSide(
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(30),
+                                          borderSide: BorderSide(
+                                              color: Colors.grey.shade900),
+                                        ),
+                                        focusedErrorBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(30),
+                                          borderSide: const BorderSide(
+                                            color: Colors.redAccent,
+                                          ),
+                                        ),
+                                        errorBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(30),
+                                          borderSide: const BorderSide(
+                                            color: Colors.redAccent,
+                                          ),
+                                        ),
+                                        hintText: "Email",
+                                        hintStyle: const TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.black87,
+                                        ),
+                                        prefixIcon: const Icon(
+                                          Icons.person,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 15, right: 15),
+                                    child: TextFormField(
+                                      keyboardType:
+                                          TextInputType.visiblePassword,
+                                      validator: (value) {
+                                        RegExp regex = RegExp(
+                                            r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{6,}$');
+                                        if (value!.isEmpty) {
+                                          return 'Please enter password';
+                                        } else {
+                                          if (!regex.hasMatch(value)) {
+                                            return 'Enter valid password';
+                                          } else {
+                                            return null;
+                                          }
+                                        }
+                                      },
+                                      obscureText: !_isPasswordVisible,
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                      ),
+                                      decoration: InputDecoration(
+                                        filled: true,
+                                        fillColor: Colors.grey.shade500,
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(30),
+                                        ),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(30),
+                                          borderSide: const BorderSide(
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(30),
+                                          borderSide: BorderSide(
+                                              color: Colors.grey.shade900),
+                                        ),
+                                        focusedErrorBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(30),
+                                          borderSide: const BorderSide(
+                                            color: Colors.redAccent,
+                                          ),
+                                        ),
+                                        errorBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(30),
+                                          borderSide: const BorderSide(
+                                            color: Colors.redAccent,
+                                          ),
+                                        ),
+                                        hintText: "Password",
+                                        hintStyle: const TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.black87,
+                                        ),
+                                        prefixIcon: const Icon(
+                                          Icons.key,
+                                          color: Colors.white,
+                                        ),
+                                        suffixIcon: IconButton(
+                                          icon: Icon(_isPasswordVisible
+                                              ? Icons.visibility_off
+                                              : Icons.visibility),
+                                          color: Colors.white,
+                                          onPressed: () {
+                                            setState(() {
+                                              _isPasswordVisible =
+                                                  !_isPasswordVisible;
+                                            });
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: [
+                                      InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            _isLoginEnabled = false;
+                                          });
+                                        },
+                                        child: const Text(
+                                          "Sign UP",
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                      InkWell(
+                                        onTap: () {},
+                                        child: const Text(
+                                          "Forgot Password?",
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.blueAccent,
+                                      //minimumSize: Size(100, 25),
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        _SignInsubmit();
+                                      });
+                                    },
+                                    child: const Text(
+                                      "Next  >>",
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      CircleAvatar(
+                                        child: IconButton(
+                                            onPressed: () {},
+                                            icon: Image.asset(
+                                                "assets/icons/google_logo.png")),
+                                      ),
+                                      const SizedBox(
+                                        width: 10,
+                                      ),
+                                      CircleAvatar(
+                                        child: IconButton(
+                                            onPressed: () {},
+                                            icon: Image.asset(
+                                                "assets/icons/apple_logo.png")),
+                                      ),
+                                      const SizedBox(
+                                        width: 10,
+                                      ),
+                                      CircleAvatar(
+                                        child: IconButton(
+                                          onPressed: () {},
+                                          icon: Image.asset(
+                                              "assets/icons/facebook_logo-removebg-preview.png"),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            )
+                          // signup Form
+                          : Form(
+                              key: signUpKey,
+                              child: Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      left: 15,
+                                      right: 15,
+                                    ),
+                                    child: TextFormField(
+                                      keyboardType: TextInputType.emailAddress,
+                                      validator: (value) {
+                                        if (value!.isEmpty ||
+                                            !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*|+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                                .hasMatch(value)) {
+                                          return " Enter a valid email!";
+                                        }
+                                        return null;
+                                      },
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                      ),
+                                      decoration: InputDecoration(
+                                        filled: true,
+                                        fillColor: Colors.grey.shade500,
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(30),
+                                        ),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(30),
+                                          borderSide: const BorderSide(
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(30),
+                                          borderSide: BorderSide(
+                                              color: Colors.grey.shade900),
+                                        ),
+                                        focusedErrorBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(30),
+                                          borderSide: const BorderSide(
+                                            color: Colors.redAccent,
+                                          ),
+                                        ),
+                                        errorBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(30),
+                                          borderSide: const BorderSide(
+                                            color: Colors.redAccent,
+                                          ),
+                                        ),
+                                        hintText: "Email",
+                                        hintStyle: const TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.black87,
+                                        ),
+                                        prefixIcon: const Icon(
+                                          Icons.person,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 15, right: 15),
+                                    child: TextFormField(
+                                      keyboardType:
+                                          TextInputType.visiblePassword,
+                                      validator: (value) {
+                                        RegExp regex = RegExp(
+                                            r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{6,}$');
+                                        if (value!.isEmpty) {
+                                          return 'Please enter password';
+                                        } else {
+                                          if (!regex.hasMatch(value)) {
+                                            return 'Enter valid password';
+                                          } else {
+                                            return null;
+                                          }
+                                        }
+                                      },
+                                      obscureText: !_isPasswordVisible,
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                      ),
+                                      decoration: InputDecoration(
+                                        filled: true,
+                                        fillColor: Colors.grey.shade500,
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(30),
+                                        ),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(30),
+                                          borderSide: const BorderSide(
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(30),
+                                          borderSide: BorderSide(
+                                              color: Colors.grey.shade900),
+                                        ),
+                                        focusedErrorBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(30),
+                                          borderSide: const BorderSide(
+                                            color: Colors.redAccent,
+                                          ),
+                                        ),
+                                        errorBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(30),
+                                          borderSide: const BorderSide(
+                                            color: Colors.redAccent,
+                                          ),
+                                        ),
+                                        hintText: "Password",
+                                        hintStyle: const TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.black87,
+                                        ),
+                                        prefixIcon: const Icon(
+                                          Icons.key,
+                                          color: Colors.white,
+                                        ),
+                                        suffixIcon: IconButton(
+                                          icon: Icon(_isPasswordVisible
+                                              ? Icons.visibility_off
+                                              : Icons.visibility),
+                                          color: Colors.white,
+                                          onPressed: () {
+                                            setState(() {
+                                              _isPasswordVisible =
+                                                  !_isPasswordVisible;
+                                            });
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 15, right: 15),
+                                    child: TextFormField(
+                                      keyboardType:
+                                          TextInputType.visiblePassword,
+                                      validator: (value) {
+                                        RegExp regex = RegExp(
+                                            r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{6,}$');
+                                        if (value!.isEmpty) {
+                                          return 'Please enter password';
+                                        } else {
+                                          if (!regex.hasMatch(value)) {
+                                            return ' password not same';
+                                          } else {
+                                            return null;
+                                          }
+                                        }
+                                      },
+                                      obscureText: !_isPasswordVisible,
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                      ),
+                                      decoration: InputDecoration(
+                                        filled: true,
+                                        fillColor: Colors.grey.shade500,
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(30),
+                                        ),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(30),
+                                          borderSide: const BorderSide(
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(30),
+                                          borderSide: BorderSide(
+                                              color: Colors.grey.shade900),
+                                        ),
+                                        focusedErrorBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(30),
+                                          borderSide: const BorderSide(
+                                            color: Colors.redAccent,
+                                          ),
+                                        ),
+                                        errorBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(30),
+                                          borderSide: const BorderSide(
+                                            color: Colors.redAccent,
+                                          ),
+                                        ),
+                                        hintText: "Confirm Password",
+                                        hintStyle: const TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.black87,
+                                        ),
+                                        prefixIcon: const Icon(
+                                          Icons.key,
+                                          color: Colors.white,
+                                        ),
+                                        suffixIcon: IconButton(
+                                          icon: Icon(_isPasswordVisible
+                                              ? Icons.visibility_off
+                                              : Icons.visibility),
+                                          color: Colors.white,
+                                          onPressed: () {
+                                            setState(() {
+                                              _isPasswordVisible =
+                                                  !_isPasswordVisible;
+                                            });
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
+                                  InkWell(
+                                    onTap: () {},
+                                    child: const Text(
+                                      "Forgot Password?",
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.blueAccent,
+                                      //minimumSize: Size(100, 25),
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        _SignUpsubmit();
+                                      });
+                                    },
+                                    child: const Text(
+                                      "Next  >>",
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                  InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        _isLoginEnabled = true;
+                                      });
+                                    },
+                                    child: const Text(
+                                      " Have account , Sign In",
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                  // Center(
+                                  //   child: Container(
+                                  //     height: 4,
+                                  //     width: screenWidth * 0.265,
+                                  //     decoration: BoxDecoration(
+                                  //       color: Colors.white10,
+                                  //       borderRadius:
+                                  //           BorderRadius.circular(30),
+                                  //     ),
+                                  //   ),
+                                  // ),
+                                ],
+                              )
+                              //,Center(
+                              //       child: ClipOval(
+                              //         child: Image.asset(
+                              //             "assets/icons/vonc_io_main-removebg-preview.png"),
+                              //       ),
+                              //     )
+                              )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ]),
       ),
     );
   }

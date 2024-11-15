@@ -1,6 +1,7 @@
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:vonc/view/login_signup/example2.dart';
+import 'package:vonc/view/login_signup/auth_screen.dart';
+
 //import 'package:vonc/view/login_signup/auth_screen.dart';
 //import 'package:vonc/view/login_signup/example2.dart';
 //import 'package:vonc/view/pages/cervices.dart';
@@ -25,7 +26,7 @@ class _VoncSplashViewState extends State<VoncSplashView> {
         splash: Image.asset("assets/videos/gif/VOnC ss.gif"),
         splashIconSize: 2000.0,
         centered: true,
-        nextScreen: const VoncMainScreen(),
+        nextScreen: const AuthScreen(),
         backgroundColor: Colors.black,
         duration: 1100,
       ),

@@ -75,21 +75,18 @@ class _VoncMainScreenState extends State<VoncMainScreen> {
             ),
           ),
           title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Image.asset(
-                  "assets/img/V_O_n_C_Logo crop-min.png",
-                  height: 30,
-                  width: 50,
-                ),
+              Image.asset(
+                "assets/img/V_O_n_C_Logo crop-min.png",
+                height: 30,
+                width: 50,
               ),
               const SizedBox(
                 width: 2,
               ),
               Container(
-                width: MediaQuery.of(context).size.width * 0.668,
+                width: MediaQuery.of(context).size.width * 0.542,
                 height: 30,
                 decoration: BoxDecoration(
                   color: Colors.grey.shade900.withOpacity(0.5),
@@ -157,18 +154,11 @@ class _VoncMainScreenState extends State<VoncMainScreen> {
               const SizedBox(
                 width: 2,
               ),
-              CircleAvatar(
-                backgroundColor: Colors.transparent,
-                radius: 20,
-                child: IconButton(
-                  onPressed: () {},
-                  icon: Image.asset(
-                    "assets/icons/vonc wathsapp logo crop.png",
-                    fit: BoxFit.cover,
-                    height: 20,
-                    width: 20,
-                  ),
-                ),
+              Image.asset(
+                "assets/icons/vonc wathsapp logo crop.png",
+                height: 20,
+                width: 20,
+                fit: BoxFit.cover,
               ),
             ],
           ),
